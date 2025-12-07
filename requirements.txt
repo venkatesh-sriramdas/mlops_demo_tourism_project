@@ -1,6 +1,6 @@
 huggingface_hub==0.32.6
 pandas==2.2.2
-numpy==2.0.2
+numpy==1.26.4
 scikit-learn==1.6.0
 xgboost==2.1.4
 mlflow==2.7.1
