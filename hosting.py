@@ -29,7 +29,7 @@ print("\n📤 Uploading deployment files to HuggingFace Space...")
 
 # Upload app.py
 api.upload_file(
-    path_or_fileobj="tourism_project/deployment/app.py",
+    path_or_fileobj="deployment/app.py",
     path_in_repo="app.py",
     repo_id=space_id,
     repo_type="space"
@@ -38,7 +38,7 @@ print("✅ Uploaded app.py")
 
 # Upload requirements.txt
 api.upload_file(
-    path_or_fileobj="tourism_project/deployment/requirements.txt",
+    path_or_fileobj="deployment/requirements.txt",
     path_in_repo="requirements.txt",
     repo_id=space_id,
     repo_type="space"
@@ -48,7 +48,7 @@ print("✅ Uploaded requirements.txt")
 # Upload Dockerfile (optional, but good for custom builds)
 try:
     api.upload_file(
-        path_or_fileobj="tourism_project/deployment/Dockerfile",
+        path_or_fileobj="deployment/Dockerfile",
         path_in_repo="Dockerfile",
         repo_id=space_id,
         repo_type="space"
