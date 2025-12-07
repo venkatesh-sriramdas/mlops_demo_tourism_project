@@ -4,6 +4,7 @@ import numpy as np
 import joblib
 from huggingface_hub import hf_hub_download
 import os
+import sys
 
 # Set page configuration
 st.set_page_config(
@@ -51,30 +52,47 @@ st.markdown("""
 @st.cache_resource
 def load_artifacts():
     try:
-        # Download model artifacts from HuggingFace
+        print("Starting to download model artifacts...", file=sys.stderr)
+
+        # Download model artifacts from HuggingFace with timeout settings
         model_path = hf_hub_download(
             repo_id="svenkateshdotnet/tourism_project_model",
             filename="model.pkl",
-            repo_type="model"
+            repo_type="model",
+            cache_dir="./cache"
         )
+        print(f"Model downloaded: {model_path}", file=sys.stderr)
+
         scaler_path = hf_hub_download(
             repo_id="svenkateshdotnet/tourism_project_model",
             filename="scaler.pkl",
-            repo_type="model"
+            repo_type="model",
+            cache_dir="./cache"
         )
+        print(f"Scaler downloaded: {scaler_path}", file=sys.stderr)
+
         encoders_path = hf_hub_download(
             repo_id="svenkateshdotnet/tourism_project_model",
             filename="label_encoders.pkl",
-            repo_type="model"
+            repo_type="model",
+            cache_dir="./cache"
         )
+        print(f"Encoders downloaded: {encoders_path}", file=sys.stderr)
 
         # Load artifacts
+        print("Loading model...", file=sys.stderr)
         model = joblib.load(model_path)
+        print("Loading scaler...", file=sys.stderr)
         scaler = joblib.load(scaler_path)
+        print("Loading encoders...", file=sys.stderr)
         encoders = joblib.load(encoders_path)
 
+        print("All artifacts loaded successfully!", file=sys.stderr)
         return model, scaler, encoders
     except Exception as e:
+        print(f"ERROR loading artifacts: {str(e)}", file=sys.stderr)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
         st.error(f"Error loading model: {str(e)}")
         return None, None, None
 
@@ -82,12 +100,13 @@ def load_artifacts():
 st.markdown('<p class="main-header">✈️ Wellness Tourism Package Predictor</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Predict customer purchase likelihood for Wellness Tourism Package</p>', unsafe_allow_html=True)
 
-# Load model
-with st.spinner("Loading model..."):
+# Load model with progress indicator
+with st.spinner("Loading model from HuggingFace... This may take a moment."):
     model, scaler, label_encoders = load_artifacts()
 
 if model is None:
-    st.error("Failed to load model. Please check your HuggingFace credentials.")
+    st.error("⚠️ Failed to load model. Please refresh the page or contact support.")
+    st.info("The model files may still be downloading. Please wait a moment and refresh.")
     st.stop()
 
 st.success("✅ Model loaded successfully!")
@@ -235,9 +254,8 @@ if st.button("🔮 Predict Purchase Likelihood", use_container_width=True):
 
     except Exception as e:
         st.error(f"Error making prediction: {str(e)}")
-        st.write("Debug info:")
-        st.write(f"Input data shape: {input_data.shape}")
-        st.write(f"Columns: {input_data.columns.tolist()}")
+        import traceback
+        st.code(traceback.format_exc())
 
 # Footer
 st.markdown("---")
