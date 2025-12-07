@@ -1,0 +1,5 @@
+processed_data/ 
+final_model/ 
+__pycache__/ 
+*.pyc 
+.ipynb_checkpoints/ 
