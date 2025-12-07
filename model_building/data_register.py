@@ -18,10 +18,12 @@ except RepositoryNotFoundError:
     create_repo(repo_id=repo_id, repo_type=repo_type, private=False, token=os.getenv("HF_TOKEN"))
     print(f"✅ Repository '{repo_id}' created successfully!")
 
-# Change to the tourism_project directory to access the data folder
+# Get the data folder path (relative to script location)
+# Script is in: model_building/data_register.py
+# Data folder is in: data/
 script_dir = os.path.dirname(os.path.abspath(__file__))
-tourism_project_dir = os.path.dirname(os.path.dirname(script_dir))
-data_folder = os.path.join(tourism_project_dir, "tourism_project", "data")
+project_root = os.path.dirname(script_dir)  # Go up one level from model_building to project root
+data_folder = os.path.join(project_root, "data")
 
 print(f"📁 Looking for data folder at: {data_folder}")
 

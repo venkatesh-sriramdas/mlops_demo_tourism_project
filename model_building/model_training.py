@@ -194,8 +194,14 @@ print(f"F1-Score: {best_metrics['f1_score']:.4f}")
 
 # Save best model and artifacts
 print("\n💾 Saving best model and artifacts...")
-os.makedirs("tourism_project/final_model", exist_ok=True)
-joblib.dump(best_model_obj, "tourism_project/final_model/model.pkl")
+# Get script directory and create final_model in tourism_project root
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(script_dir))
+final_model_dir = os.path.join(project_root, "tourism_project", "final_model")
+os.makedirs(final_model_dir, exist_ok=True)
+
+model_path = os.path.join(final_model_dir, "model.pkl")
+joblib.dump(best_model_obj, model_path)
 
 # Download and save scaler and encoders
 scaler_path = hf_hub_download(
@@ -213,11 +219,11 @@ encoders_path = hf_hub_download(
 
 # Copy to final_model folder
 import shutil
-shutil.copy(scaler_path, "tourism_project/final_model/scaler.pkl")
-shutil.copy(encoders_path, "tourism_project/final_model/label_encoders.pkl")
+shutil.copy(scaler_path, os.path.join(final_model_dir, "scaler.pkl"))
+shutil.copy(encoders_path, os.path.join(final_model_dir, "label_encoders.pkl"))
 
 # Save model info
-with open("tourism_project/final_model/model_info.txt", "w") as f:
+with open(os.path.join(final_model_dir, "model_info.txt"), "w") as f:
     f.write(f"Best Model: {best_model_name}\n")
     f.write(f"ROC-AUC: {best_metrics['roc_auc']:.4f}\n")
     f.write(f"Accuracy: {best_metrics['accuracy']:.4f}\n")
@@ -225,7 +231,7 @@ with open("tourism_project/final_model/model_info.txt", "w") as f:
     f.write(f"Recall: {best_metrics['recall']:.4f}\n")
     f.write(f"F1-Score: {best_metrics['f1_score']:.4f}\n")
 
-print("✅ Model and artifacts saved locally")
+print(f"✅ Model and artifacts saved to: {final_model_dir}")
 
 # Register model to HuggingFace Model Hub
 print("\n📤 Registering model to HuggingFace Model Hub...")
@@ -243,7 +249,7 @@ except:
 
 # Upload model files
 api.upload_folder(
-    folder_path="tourism_project/final_model",
+    folder_path=final_model_dir,
     repo_id=model_repo_id,
     repo_type="model"
 )
