@@ -18,10 +18,20 @@ except RepositoryNotFoundError:
     create_repo(repo_id=repo_id, repo_type=repo_type, private=False, token=os.getenv("HF_TOKEN"))
     print(f"✅ Repository '{repo_id}' created successfully!")
 
+# Change to the tourism_project directory to access the data folder
+script_dir = os.path.dirname(os.path.abspath(__file__))
+tourism_project_dir = os.path.dirname(os.path.dirname(script_dir))
+data_folder = os.path.join(tourism_project_dir, "tourism_project", "data")
+
+print(f"📁 Looking for data folder at: {data_folder}")
+
+if not os.path.isdir(data_folder):
+    raise ValueError(f"Data folder not found at: {data_folder}")
+
 # Upload the data folder to HuggingFace
 print("📤 Uploading tourism.csv to HuggingFace...")
 api.upload_folder(
-    folder_path="data",
+    folder_path=data_folder,
     repo_id=repo_id,
     repo_type=repo_type,
 )

@@ -85,24 +85,27 @@ X_test[numerical_features] = scaler.transform(X_test[numerical_features])
 
 # Save processed data locally
 print("\n💾 Saving processed data...")
-os.makedirs("tourism_project/processed_data", exist_ok=True)
-X_train.to_csv("tourism_project/processed_data/X_train.csv", index=False)
-X_test.to_csv("tourism_project/processed_data/X_test.csv", index=False)
-y_train.to_csv("tourism_project/processed_data/y_train.csv", index=False, header=True)
-y_test.to_csv("tourism_project/processed_data/y_test.csv", index=False, header=True)
+X_train.to_csv("X_train.csv", index=False)
+X_test.to_csv("X_test.csv", index=False)
+y_train.to_csv("y_train.csv", index=False, header=True)
+y_test.to_csv("y_test.csv", index=False, header=True)
 
 # Save scaler and encoders
-joblib.dump(scaler, "tourism_project/processed_data/scaler.pkl")
-joblib.dump(label_encoders, "tourism_project/processed_data/label_encoders.pkl")
+joblib.dump(scaler, "scaler.pkl")
+joblib.dump(label_encoders, "label_encoders.pkl")
 
-# Upload processed data to HuggingFace
+# Upload processed files to HuggingFace
 print("\n📤 Uploading processed data to HuggingFace...")
 api = HfApi(token=os.getenv("HF_TOKEN"))
-api.upload_folder(
-    folder_path="tourism_project/processed_data",
-    repo_id="svenkateshdotnet/tourism_project",
-    repo_type="dataset",
-    path_in_repo="processed_data"
-)
+
+files = ["X_train.csv", "X_test.csv", "y_train.csv", "y_test.csv", "scaler.pkl", "label_encoders.pkl"]
+for file_path in files:
+    api.upload_file(
+        path_or_fileobj=file_path,
+        path_in_repo=f"processed_data/{file_path}",
+        repo_id="svenkateshdotnet/tourism_project",
+        repo_type="dataset"
+    )
+    print(f"✅ Uploaded {file_path}")
 
 print("✅ Data preparation completed successfully!")
