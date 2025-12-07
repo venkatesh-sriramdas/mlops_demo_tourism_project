@@ -21,7 +21,7 @@ except RepositoryNotFoundError:
 # Upload the data folder to HuggingFace
 print("📤 Uploading tourism.csv to HuggingFace...")
 api.upload_folder(
-    folder_path="tourism_project/data",
+    folder_path="data",
     repo_id=repo_id,
     repo_type=repo_type,
 )
