@@ -18,7 +18,7 @@ except:
     create_repo(
         repo_id=space_id,
         repo_type="space",
-        space_sdk="streamlit",
+        space_sdk="docker",
         private=False,
         token=os.getenv("HF_TOKEN")
     )
